@@ -1,0 +1,24 @@
+version: '2'
+
+services:
+  postgres:
+    image: "postgres:latest"
+    container_name: denti-imager-postgres
+    hostname: denti-imager-postgres
+    environment:
+      POSTGRES_PASSWORD: denti-imager-postgres
+      POSTGRES_USER: denti-imager-postgres
+    ports:
+      - 5432:5432
+    volumes:
+      - ../volumes/postgres:/var/lib/postgresql
+
+  rabbitmq:
+    image: "rabbitmq:management"
+    container_name: denti-imager-rabbitmq
+    hostname: denti-imager-rabbitmq
+    ports:
+      - 5672:5672
+      - 15672:15672
+    volumes:
+      - ../volumes/rabbitmq:/var/lib/rabbitmq

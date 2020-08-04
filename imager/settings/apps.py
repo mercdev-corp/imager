@@ -1,0 +1,5 @@
+PROJECT_APPS = [
+    'imager',
+]
+
+INSTALLED_APPS += PROJECT_APPS
