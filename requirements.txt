@@ -1,8 +1,11 @@
 psycopg2-binary
 
-django==3.0
+daphne
+django==3.1
+djangorestframework==3.11.0
 django-split-settings
 celery
+pillow
 
 django-webtest
 model-mommy

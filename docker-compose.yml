@@ -3,11 +3,11 @@ version: '2'
 services:
   postgres:
     image: "postgres:latest"
-    container_name: denti-imager-postgres
-    hostname: denti-imager-postgres
+    container_name: imager-postgres
+    hostname: imager-postgres
     environment:
-      POSTGRES_PASSWORD: denti-imager-postgres
-      POSTGRES_USER: denti-imager-postgres
+      POSTGRES_PASSWORD: imager-postgres
+      POSTGRES_USER: imager-postgres
     ports:
       - 5432:5432
     volumes:
@@ -15,10 +15,50 @@ services:
 
   rabbitmq:
     image: "rabbitmq:management"
-    container_name: denti-imager-rabbitmq
-    hostname: denti-imager-rabbitmq
+    container_name: imager-rabbitmq
+    hostname: imager-rabbitmq
     ports:
       - 5672:5672
       - 15672:15672
     volumes:
       - ../volumes/rabbitmq:/var/lib/rabbitmq
+
+  daphne:
+    image: "python:3.8-buster"
+    container_name: imager-daphne
+    hostname: imager-python
+    command: /entrypoint.sh
+    environment:
+      DOCKER_CONTAINER: 1
+      RABBIT_HOST: imager-rabbitmq
+      POSTGRES_HOST: imager-postgres
+      POSTGRES_PASSWORD: imager-postgres
+      POSTGRES_USER: imager-postgres
+    links:
+      - rabbitmq
+      - postgres
+    ports:
+      - 8000:8000
+    volumes:
+      - ./entrypoint.sh:/entrypoint.sh
+      - ../volumes/env:/imager/env
+      - ../volumes/media:/imager/media
+      - ./:/imager/imager
+
+  nginx:
+    image: nginx
+    container_name: imager-nginx
+    hostname: imager-nginx
+    environment:
+      DAPHNE_PORT: 8000
+      DAPHNE_HOST: imager-daphne
+    links:
+      - daphne
+    ports:
+      - 80:80
+    volumes:
+      - ./nginx:/etc/nginx/templates
+      - ../volumes/media:/imager:ro
+      - ../volumes/nginx:/etc/nginx/conf.d
+
+

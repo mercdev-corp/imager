@@ -1,0 +1,4 @@
+REST_FRAMEWORK = {
+    'URL_FORMAT_OVERRIDE': 'fmt',
+    'FORMAT_SUFFIX_KWARG': 'fmt',
+}
